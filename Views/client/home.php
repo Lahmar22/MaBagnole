@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['id_utilisateur'])) {
+    header('Location: ../login.php');
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -51,7 +59,7 @@
             <div class="relative flex items-center">
                 <button id="profileDropdownBtn" class="flex items-center gap-3 focus:outline-none group">
                     <div class="text-right hidden md:block">
-                        <p class="text-sm font-medium text-white">Jean Dupont</p>
+                        <p class="text-sm font-medium text-white"><?= $_SESSION['nom']  ?> <?= $_SESSION['prenom']  ?></p>
                         
                     </div>
                     
