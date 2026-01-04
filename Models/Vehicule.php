@@ -27,6 +27,15 @@ class Vehicule
         $this->$property = $value;
     }
 
+    public function getContVehicule(){
+        $db = Connection::connect();
+        $sqlContV = "SELECT COUNT(*) AS total FROM vehicule";
+        $stmt = $db->prepare($sqlContV);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+
     public function ajouterVehicule(Vehicule $vehicule) {
         $db = Connection::connect();
         $sqlVehicule = "INSERT INTO vehicule (modele, marque, prixParJour, description, id_categorie, image) VALUES (?, ?, ?, ?, ?, ?)";
@@ -38,6 +47,15 @@ class Vehicule
         $db = Connection::connect();
         $sqlVehiculees = "SELECT v.id_Vehicule, v.modele, v.marque, v.prixParJour, v.description, v.id_categorie, v.image, v.statut, c.id_Categorie, c.nomCategorie 
         FROM vehicule v INNER JOIN categorie c ON v.id_categorie = c.id_Categorie";
+        $stmt = $db->prepare($sqlVehiculees);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getAllVehiculeesDisp(){
+        $db = Connection::connect();
+        $sqlVehiculees = "SELECT v.id_Vehicule, v.modele, v.marque, v.prixParJour, v.description, v.id_categorie, v.image, v.statut, c.id_Categorie, c.nomCategorie 
+        FROM vehicule v INNER JOIN categorie c ON v.id_categorie = c.id_Categorie WHERE statut = 'Disponible'";
         $stmt = $db->prepare($sqlVehiculees);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);

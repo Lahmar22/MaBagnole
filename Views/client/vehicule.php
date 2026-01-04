@@ -1,3 +1,21 @@
+<?php
+
+session_start();
+if (!isset($_SESSION['id_utilisateur'])) {
+    header('Location: ../login.php');
+    exit();
+}
+require_once '../../Models/Vehicule.php';
+// require_once '../../Models/Categorie.php';
+
+$vehicule = new Vehicule();
+$vehicules = $vehicule->getAllVehiculeesDisp();
+
+// $categorie = new Categorie();
+// $categories = $categorie->getAllCategorie();
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -37,7 +55,7 @@
             <div class="relative flex items-center">
                 <button id="profileDropdownBtn" class="flex items-center gap-3 focus:outline-none group">
                     <div class="text-right hidden md:block">
-                        <p class="text-sm font-medium text-white">Jean Dupont</p>
+                        <p class="text-sm font-medium text-white"><?= $_SESSION['nom']  ?> <?= $_SESSION['prenom']  ?></p>
                         
                     </div>
                     
@@ -126,88 +144,58 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition-all group">
-                        <div class="relative h-52 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80" alt="BMW" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-4 left-4 glass px-3 py-1 rounded-full text-xs font-semibold">BMW Série 5</div>
-                            <button class="absolute top-4 right-4 w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-red-500/20 hover:text-red-500 transition">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <h3 class="text-xl font-bold">BMW M5 Competition</h3>
-                                    <div class="flex items-center gap-4 mt-2 text-sm text-gray-400">
-                                        <span><i class="fa-solid fa-gas-pump text-blue-500 mr-1"></i> Essence</span>
-                                        <span><i class="fa-solid fa-gears text-blue-500 mr-1"></i> Auto</span>
-                                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <?php foreach ($vehicules as $v) { ?>
+                        <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/40 transition-all duration-300 group flex flex-col h-full shadow-2xl shadow-black/20">
+                            
+                            <div class="relative h-56 overflow-hidden">
+                                <img src="<?= $v->image ?>" alt="<?= $v->modele ?>" 
+                                    class="w-full h-full object-cover group-hover:scale-110 transition duration-700 ease-in-out">
+                                
+                                <div class="absolute top-4 left-4">
+                                    <span class="bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
+                                        <?= $v->nomCategorie ?>
+                                    </span>
                                 </div>
-                                <div class="text-right">
-                                    <span class="text-2xl font-bold text-blue-500">180€</span>
-                                    <span class="text-xs text-gray-500 block">/jour</span>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <a href="details.php?id=1" class="text-center py-3 rounded-xl border border-gray-700 text-sm font-medium hover:bg-gray-800 transition">Détails</a>
-                                <button class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition">Réserver</button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition-all group">
-                        <div class="relative h-52 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80" alt="Audi" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-4 left-4 glass px-3 py-1 rounded-full text-xs font-semibold">SUV</div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <h3 class="text-xl font-bold">Audi Q8 S-Line</h3>
-                                    <div class="flex items-center gap-4 mt-2 text-sm text-gray-400">
-                                        <span><i class="fa-solid fa-bolt text-blue-500 mr-1"></i> Hybride</span>
-                                        <span><i class="fa-solid fa-gears text-blue-500 mr-1"></i> Auto</span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-2xl font-bold text-blue-500">155€</span>
-                                    <span class="text-xs text-gray-500 block">/jour</span>
+                                <div class="absolute bottom-4 right-4 bg-gray-950/80 backdrop-blur-md border border-white/10 px-3 py-1 rounded-xl">
+                                    <span class="text-xl font-bold text-white"><?= $v->prixParJour ?>€</span>
+                                    <span class="text-[10px] text-gray-400 font-medium">/jour</span>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <a href="#" class="text-center py-3 rounded-xl border border-gray-700 text-sm font-medium hover:bg-gray-800 transition">Détails</a>
-                                <button class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition">Réserver</button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition-all group">
-                        <div class="relative h-52 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80" alt="Tesla" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-4 left-4 glass px-3 py-1 rounded-full text-xs font-semibold">Électrique</div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <h3 class="text-xl font-bold">Tesla Model 3 Performance</h3>
-                                    <div class="flex items-center gap-4 mt-2 text-sm text-gray-400">
-                                        <span><i class="fa-solid fa-bolt text-blue-500 mr-1"></i> Électrique</span>
-                                        <span><i class="fa-solid fa-gears text-blue-500 mr-1"></i> Auto</span>
+                            <div class="p-6 flex flex-col flex-grow">
+                                <div class="mb-3">
+                                    <p class="text-blue-500 text-xs font-bold uppercase tracking-tighter mb-1"><?= $v->marque ?></p>
+                                    <h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition"><?= $v->modele ?></h3>
+                                </div>
+
+                                <p class="text-gray-400 text-sm line-clamp-2 mb-6 italic font-light">
+                                    "<?= $v->description ?>"
+                                </p>
+
+                                <div class="flex items-center gap-4 mb-6 pt-4 border-t border-gray-800">
+                                    <div class="flex items-center gap-1.5 text-gray-500">
+                                        <i class="fa-solid fa-layer-group text-blue-500/70 text-xs"></i>
+                                        <span class="text-xs"><?= $v->nomCategorie ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 text-gray-500">
+                                        <i class="fa-solid fa-check-double text-green-500/70 text-xs"></i>
+                                        <span class="text-xs"><?= $v->statut ?></span>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <span class="text-2xl font-bold text-blue-500">130€</span>
-                                    <span class="text-xs text-gray-500 block">/jour</span>
+
+                                <div class="mt-auto">
+                                    <button onclick="resevationModal(this)"
+                                    data-id-vehicule="<?= $v->id_Vehicule ?>"
+                                    class="w-full bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-600 hover:to-blue-400 text-white py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-calendar-days text-xs"></i>
+                                        Réserver Maintenant
+                                    </button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <a href="#" class="text-center py-3 rounded-xl border border-gray-700 text-sm font-medium hover:bg-gray-800 transition">Détails</a>
-                                <button class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition">Réserver</button>
-                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
 
                 </div>
             </div>
@@ -257,6 +245,65 @@
             </div>
         </div>
     </footer>
+    
+    <div id="modalReservation" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+    
+    <div class="bg-slate-900 border border-gray-800 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
+        
+        <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
+            <div>
+                <h2 class="text-xl font-bold text-white">Nouvelle Réservation</h2>
+               
+            </div>
+            <button onclick="resevationModal(this)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-800 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form action="../../Controllers/reservationVehicule.php" method="POST" class="p-6 space-y-5">
+            
+            <input type="hidden" name="id_user" value="<?= $_SESSION['id_utilisateur'] ?>">
+            <input type="hidden" name="id_vehicule" id="vehicule">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-gray-400 uppercase ml-1">Date Début</label>
+                    <input type="date" name="dateDebut" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-gray-400 uppercase ml-1">Date Fin</label>
+                    <input type="date" name="dateFin" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-gray-400 uppercase ml-1">Lieu de prise</label>
+                <div class="relative">
+                    <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-blue-500 text-xs"></i>
+                    <input type="text" name="lieuPrise" placeholder="Ex: Agence Centre" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl py-3 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-gray-400 uppercase ml-1">Lieu de retour</label>
+                <div class="relative">
+                    <i class="fa-solid fa-arrow-rotate-left absolute left-4 top-3.5 text-cyan-500 text-xs"></i>
+                    <input type="text" name="lieuRetour" placeholder="Ex: Aéroport" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl py-3 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            
+            <div class="flex gap-3 pt-4">
+                <button type="button" onclick="resevationModal(this)" class="flex-1 py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-700 transition">
+                    Annuler
+                </button>
+                <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/30 transition transform active:scale-95">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+    
     <script>
         const btn = document.getElementById('profileDropdownBtn');
     const menu = document.getElementById('profileDropdownMenu');
@@ -272,6 +319,14 @@
             menu.classList.add('hidden');
         }
     });
+
+    function resevationModal(button) {
+        console.log(button.dataset);
+        document.getElementById("vehicule").value = button.dataset.idVehicule;
+
+        document.getElementById('modalReservation').classList.toggle('hidden');
+        const modal = document.getElementById('catgModal');
+    }
     </script>
 
     </body>

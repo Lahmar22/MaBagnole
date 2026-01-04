@@ -1,3 +1,16 @@
+<?php
+
+session_start();
+if (!isset($_SESSION['id_utilisateur'])) {
+    header('Location: ../login.php');
+    exit();
+}
+
+require_once '../../Models/Reservation.php';
+
+$reserve = new Reservation();
+$reservations = $reserve->getReservation($_SESSION['id_utilisateur']);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -26,10 +39,15 @@
                 </span>
             </div>
             </a>
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium text-gray-300">
+                <a href="home.php" class="hover:text-blue-400 transition">Accueil</a>
+                <a href="vehicule.php" class="hover:text-blue-400 transition">Véhicules</a>
+                
+            </div>
             <div class="relative flex items-center">
                 <button id="profileDropdownBtn" class="flex items-center gap-3 focus:outline-none group">
                     <div class="text-right hidden md:block">
-                        <p class="text-sm font-medium text-white">Jean Dupont</p>
+                        <p class="text-sm font-medium text-white"><?= $_SESSION['nom']  ?> <?= $_SESSION['prenom']  ?></p>
                         
                     </div>
                     
@@ -65,90 +83,52 @@
 
         <div class="space-y-6">
 
-            <div class="glass rounded-3xl overflow-hidden p-2 border border-blue-500/30">
-                <div class="flex flex-col lg:flex-row items-center gap-6 p-4">
-                    <div class="w-full lg:w-64 h-40 rounded-2xl overflow-hidden shrink-0">
-                        <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=400&q=80" alt="Car" class="w-full h-full object-cover">
-                    </div>
-                    
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                        <div>
-                            <span class="text-xs font-bold uppercase tracking-widest text-blue-500 mb-1 block">Confirmée</span>
-                            <h3 class="text-xl font-bold text-white">BMW M5 Competition</h3>
-                            <p class="text-gray-500 text-sm mt-1">ID: #MB-8829</p>
+            <?php foreach ($reservations as $r){ ?>
+                <div class="glass rounded-3xl overflow-hidden p-2 border border-blue-500/30">
+                    <div class="flex flex-col lg:flex-row items-center gap-6 p-4">
+                        <div class="w-full lg:w-64 h-40 rounded-2xl overflow-hidden shrink-0">
+                            <img src="<?=$r->image ?>" alt="<?=$r->marque ?>" class="w-full h-full object-cover">
                         </div>
                         
-                        <div class="flex flex-col justify-center">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i class="fa-regular fa-calendar text-gray-400"></i>
-                                <span class="text-sm text-gray-300">12 Jan. 2025 - 15 Jan. 2025</span>
+                        <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-widest text-blue-500 mb-1 block"><?=$r->statut ?></span>
+                                <h3 class="text-xl font-bold text-white"><?=$r->modele ?></h3>
+                                <p class="text-gray-500 text-sm mt-1"><?=$r->marque ?></p>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-location-dot text-gray-400"></i>
-                                <span class="text-sm text-gray-300">Paris, Agence Charles de Gaulle</span>
+                            
+                            <div class="flex flex-col justify-center">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fa-regular fa-calendar text-gray-400"></i>
+                                    <span class="text-sm text-gray-300"><?=$r->dateDebut ?> - <?=$r->dateFin ?></span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-location-dot text-gray-400"></i>
+                                    <span class="text-sm text-gray-300"><?=$r->lieuPrise ?></span>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="flex flex-col justify-center md:items-end">
+                                <span class="text-2xl font-bold text-white"><?=$r->prixParJour ?> MAD</span>
+                                
                             </div>
                         </div>
 
-                        <div class="flex flex-col justify-center md:items-end">
-                            <span class="text-2xl font-bold text-white">540,00 €</span>
-                            <span class="text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded mt-1">Payé par Carte</span>
+                        <div class="flex flex-row lg:flex-col gap-2 w-full lg:w-auto">
+                            
+                            <form action="../../Controllers/anuulerReservation.php" method="POST">
+                                <input type="hidden" name="id_Reservation" value="<?=$r->id_Reservation ?>">
+                                <button type="submit" class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-4 py-3 rounded-xl text-xs font-bold transition">
+                                    Annuler
+                                </button>
+                            </form>
                         </div>
-                    </div>
-
-                    <div class="flex flex-row lg:flex-col gap-2 w-full lg:w-auto">
-                        <button class="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition">
-                            <i class="fa-solid fa-file-invoice mr-2"></i>Facture
-                        </button>
-                        <button class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-4 py-3 rounded-xl text-xs font-bold transition">
-                            Annuler
-                        </button>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
 
-            <div class="glass rounded-3xl overflow-hidden p-2 border border-gray-800 opacity-80 hover:opacity-100 transition">
-                <div class="flex flex-col lg:flex-row items-center gap-6 p-4">
-                    <div class="w-full lg:w-64 h-40 rounded-2xl overflow-hidden shrink-0 grayscale">
-                        <img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=400&q=80" alt="Car" class="w-full h-full object-cover">
-                    </div>
-                    
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                        <div>
-                            <span class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1 block">Terminée</span>
-                            <h3 class="text-xl font-bold text-white">Range Rover Velar</h3>
-                            <p class="text-gray-500 text-sm mt-1">ID: #MB-7741</p>
-                        </div>
-                        
-                        <div class="flex flex-col justify-center text-gray-500">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i class="fa-regular fa-calendar"></i>
-                                <span class="text-sm">01 Dec. 2024 - 05 Dec. 2024</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-location-dot"></i>
-                                <span class="text-sm">Lyon, Agence Part-Dieu</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col justify-center md:items-end">
-                            <span class="text-2xl font-bold text-gray-500">600,00 €</span>
-                            <div class="flex gap-1 mt-2">
-                                <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
-                                <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
-                                <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
-                                <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
-                                <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-row lg:flex-col gap-2 w-full lg:w-auto">
-                        <button class="flex-1 bg-blue-600/10 hover:bg-blue-600 text-blue-500 hover:text-white px-6 py-3 rounded-xl text-xs font-bold transition">
-                            Relouer
-                        </button>
-                    </div>
-                </div>
-            </div>
+            
 
         </div>
 

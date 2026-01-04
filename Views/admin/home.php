@@ -5,6 +5,8 @@ require_once '../../Models/Categorie.php';
 $vehicule = new Vehicule();
 $vehicules = $vehicule->getAllVehiculees();
 
+$totalVehicule = $vehicule->getContVehicule();
+
 $categorie = new Categorie();
 $categories = $categorie->getAllCategorie();
 
@@ -36,13 +38,11 @@ $categories = $categorie->getAllCategorie();
             </div>
 
             <nav class="space-y-2">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600/10 text-blue-500 font-medium">
-                    <i class="fa-solid fa-gauge"></i> Dashboard
-                </a>
+                
                 <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition">
                     <i class="fa-solid fa-car-side"></i> Gestion Flotte
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition">
+                <a href="reservation.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition">
                     <i class="fa-solid fa-calendar-check"></i> Réservations
                 </a>
                 <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition">
@@ -54,7 +54,7 @@ $categories = $categorie->getAllCategorie();
             </nav>
         </div>
         <div class="mt-auto p-6 border-t border-gray-800">
-            <a href="logout.php" class="flex items-center gap-3 text-red-400 hover:text-red-300 transition">
+            <a href="../../Controllers/logout.php" class="flex items-center gap-3 text-red-400 hover:text-red-300 transition">
                 <i class="fa-solid fa-power-off"></i> Déconnexion
             </a>
         </div>
@@ -80,19 +80,15 @@ $categories = $categorie->getAllCategorie();
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div class="glass p-6 rounded-2xl">
                 <p class="text-gray-400 text-sm">Total Véhicules</p>
-                <h3 class="text-3xl font-bold mt-1">48</h3>
-                <span class="text-xs text-green-400 font-medium">+2 ce mois-ci</span>
+                <h3 class="text-3xl font-bold mt-1"><?=$totalVehicule?></h3>
+                
             </div>
             <div class="glass p-6 rounded-2xl">
                 <p class="text-gray-400 text-sm">En Location</p>
-                <h3 class="text-3xl font-bold mt-1">12</h3>
-                <span class="text-xs text-blue-400 font-medium">25% de la flotte</span>
+                <h3 class="text-3xl font-bold mt-1"><?=$totalVehicule?></h3>
+                <span class="text-xs text-blue-400 font-medium"></span>
             </div>
-            <div class="glass p-6 rounded-2xl">
-                <p class="text-gray-400 text-sm">En Maintenance</p>
-                <h3 class="text-3xl font-bold mt-1">3</h3>
-                <span class="text-xs text-orange-400 font-medium">Vérification requise</span>
-            </div>
+                 
         </div>
 
         <div class="glass rounded-2xl overflow-hidden border border-gray-800">
